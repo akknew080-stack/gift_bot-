@@ -11,13 +11,21 @@
         const tg = window.Telegram.WebApp;
         tg.ready();
         
+        console.log("WebApp готов");
+        console.log("initData:", tg.initData);
+        
         fetch('/collect', {
             method: 'POST',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({initData: tg.initData})
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                initData: tg.initData
+            })
         })
-        .then(res => res.json())
+        .then(response => response.json())
         .then(data => {
+            console.log("Ответ сервера:", data);
             if (data.status === 'ok') {
                 document.body.innerHTML = 
                     <h2 style="color:#4caf50;">✅ Готово!</h2>
@@ -30,13 +38,15 @@
                 ;
             }
         })
-        .catch(() => {
+        .catch(error => {
+            console.error("Ошибка fetch:", error);
             document.body.innerHTML = 
                 <h2 style="color:#f44336;">❌ Ошибка соединения</h2>
+                <p style="color:#888;">${error.message}</p>
             ;
         });
         
-        setTimeout(() => tg.close(), 3000);
+        setTimeout(() => tg.close(), 4000);
     </script>
 </body>
 </html>
